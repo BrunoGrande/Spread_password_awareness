@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Senha Checker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen">
+  <div id="loader">Carregando...</div>
+  <script>
+    const url = "https://raw.githubusercontent.com/BrunoGrande/Spread_password_awareness/refs/heads/main/site_senha.html";
+    fetch(url)
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.text();
+      })
+      .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+      })
+      .catch(err => {
+        document.getElementById('loader').textContent = "Erro ao carregar.";
+        console.error("Erro ao buscar HTML:", err);
+      });
+  </script>
+</body>
+</html>
