@@ -1,0 +1,507 @@
+<!DOCTYPE html> 
+
+<html lang="pt-BR"> 
+
+<head> 
+
+    <meta charset="UTF-8"> 
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+
+    <title>Verificador de Força de Senha</title> 
+
+    <script src="https://cdn.tailwindcss.com"></script> 
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet"> 
+
+    <style> 
+
+        body { 
+
+            font-family: 'Inter', sans-serif; 
+
+        } 
+
+        .font-mono { 
+
+            font-family: 'Roboto Mono', monospace; 
+
+        } 
+
+        /* Custom transition for a smoother progress bar update */ 
+
+        .transition-all { 
+
+            transition: all 0.3s ease-in-out; 
+
+        } 
+
+    </style> 
+
+</head> 
+
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4"> 
+
+ 
+
+    <div class="w-full max-w-2xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-10"> 
+
+         
+
+        <!-- Header Section --> 
+
+        <div class="text-center mb-6"> 
+
+            <h1 class="text-3xl md:text-4xl font-bold text-cyan-400 mb-2">Fortaleça suas Senhas</h1> 
+
+            <p class="text-gray-400 text-lg">Veja sua senha se transformar à medida que fica mais forte.</p> 
+
+        </div> 
+
+ 
+
+        <!-- Visual Password Display --> 
+
+        <div class="text-center mb-6"> 
+
+            <h2 id="visual-password" class="text-4xl md:text-5xl font-mono font-bold tracking-widest text-gray-500 transition-all">SAFEPASSWORD</h2> 
+
+        </div> 
+
+ 
+
+        <!-- Password Input --> 
+
+        <div class="relative mb-4"> 
+
+            <input type="password" id="password-input" 
+
+                   class="w-full p-4 pr-12 bg-gray-700 border-2 border-gray-600 rounded-lg text-xl text-center text-white focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500 transition duration-300" 
+
+                   placeholder="Digite sua senha aqui..." 
+
+                   autocomplete="off" 
+
+                   autocorrect="off"  
+
+                   autocapitalize="off"  
+
+                   spellcheck="false"> 
+
+            <button id="toggle-visibility" type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 hover:text-cyan-400 transition-colors"> 
+
+                <svg id="eye-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> 
+
+                <svg id="eye-off-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path></svg> 
+
+            </button> 
+
+        </div> 
+
+ 
+
+        <!-- Strength Meter --> 
+
+        <div class="w-full bg-gray-700 rounded-full h-4 mb-2 overflow-hidden"> 
+
+            <div id="strength-bar" class="h-4 rounded-full transition-all" style="width: 0%;"></div> 
+
+        </div> 
+
+        <div class="flex justify-between text-sm text-gray-400 mb-6"> 
+
+            <span id="strength-text">Comece a digitar...</span> 
+
+        </div> 
+
+ 
+
+        <!-- Crack Time Estimation --> 
+
+        <div class="bg-gray-900/50 p-6 rounded-lg text-center mb-8"> 
+
+            <h2 class="text-lg text-gray-400 mb-2">Tempo estimado para quebra:</h2> 
+
+            <p id="crack-time" class="text-3xl font-bold text-cyan-300">--</p> 
+
+        </div> 
+
+         
+
+        <!-- Feedback and Tips --> 
+
+        <div id="feedback-section" class="space-y-3"> 
+
+            <h3 class="text-xl font-semibold text-white mb-3">Dicas para uma senha segura:</h3> 
+
+            <div id="tip-length" class="flex items-center text-gray-400 transition-colors duration-300"> 
+
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+
+                <span>Use pelo menos 12 caracteres.</span> 
+
+            </div> 
+
+            <div id="tip-uppercase" class="flex items-center text-gray-400 transition-colors duration-300"> 
+
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+
+                <span>Inclua letras MAIÚSCULAS.</span> 
+
+            </div> 
+
+            <div id="tip-lowercase" class="flex items-center text-gray-400 transition-colors duration-300"> 
+
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+
+                <span>Inclua letras minúsculas.</span> 
+
+            </div> 
+
+            <div id="tip-numbers" class="flex items-center text-gray-400 transition-colors duration-300"> 
+
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+
+                <span>Inclua números (0-9).</span> 
+
+            </div> 
+
+            <div id="tip-symbols" class="flex items-center text-gray-400 transition-colors duration-300"> 
+
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
+
+                <span>Inclua símbolos (!@#$%).</span> 
+
+            </div> 
+
+        </div> 
+
+    </div> 
+
+ 
+
+    <script> 
+
+        const passwordInput = document.getElementById('password-input'); 
+
+        const strengthBar = document.getElementById('strength-bar'); 
+
+        const strengthText = document.getElementById('strength-text'); 
+
+        const crackTimeText = document.getElementById('crack-time'); 
+
+        const visualPassword = document.getElementById('visual-password'); 
+
+        const toggleVisibilityButton = document.getElementById('toggle-visibility'); 
+
+        const eyeIcon = document.getElementById('eye-icon'); 
+
+        const eyeOffIcon = document.getElementById('eye-off-icon'); 
+
+ 
+
+        // Tip elements 
+
+        const tipLength = document.getElementById('tip-length'); 
+
+        const tipUppercase = document.getElementById('tip-uppercase'); 
+
+        const tipLowercase = document.getElementById('tip-lowercase'); 
+
+        const tipNumbers = document.getElementById('tip-numbers'); 
+
+        const tipSymbols = document.getElementById('tip-symbols'); 
+
+ 
+
+        passwordInput.addEventListener('input', updatePasswordStrength); 
+
+        toggleVisibilityButton.addEventListener('click', togglePasswordVisibility); 
+
+ 
+
+        function togglePasswordVisibility() { 
+
+            const isPassword = passwordInput.type === 'password'; 
+
+            passwordInput.type = isPassword ? 'text' : 'password'; 
+
+            eyeIcon.classList.toggle('hidden', isPassword); 
+
+            eyeOffIcon.classList.toggle('hidden', !isPassword); 
+
+        } 
+
+ 
+
+        function updatePasswordStrength() { 
+
+            const password = passwordInput.value; 
+
+             
+
+            if (password.length === 0) { 
+
+                resetUI(); 
+
+                return; 
+
+            } 
+
+ 
+
+            let characterPool = 0; 
+
+            const has = { 
+
+                lowercase: /[a-z]/.test(password), 
+
+                uppercase: /[A-Z]/.test(password), 
+
+                numbers: /[0-9]/.test(password), 
+
+                symbols: /[^a-zA-Z0-9]/.test(password) 
+
+            }; 
+
+ 
+
+            if (has.lowercase) characterPool += 26; 
+
+            if (has.uppercase) characterPool += 26; 
+
+            if (has.numbers) characterPool += 10; 
+
+            if (has.symbols) characterPool += 32; 
+
+ 
+
+            const length = password.length; 
+
+            const entropy = length * (characterPool > 1 ? Math.log2(characterPool) : 0); 
+
+ 
+
+            const strength = getStrengthLevel(entropy); 
+
+             
+
+            updateStrengthMeter(strength); 
+
+            updateVisualWord(length, strength); 
+
+            updateTips(length, has); 
+
+ 
+
+            const combinations = BigInt(characterPool) ** BigInt(length); 
+
+            const guessesPerSecond = BigInt(100 * 10**9);  
+
+            const secondsToCrack = (guessesPerSecond > 0) ? combinations / guessesPerSecond : BigInt(0); 
+
+             
+
+            displayCrackTime(secondsToCrack); 
+
+        } 
+
+ 
+
+        function getStrengthLevel(entropy) { 
+
+            if (entropy >= 128) { 
+
+                return { level: 5, width: '100%', color: 'bg-green-500', textColor: 'text-green-400', text: 'Muito Forte' }; 
+
+            } else if (entropy >= 60) { 
+
+                return { level: 4, width: '75%', color: 'bg-lime-500', textColor: 'text-lime-400', text: 'Forte' }; 
+
+            } else if (entropy >= 36) { 
+
+                return { level: 3, width: '50%', color: 'bg-yellow-500', textColor: 'text-yellow-400', text: 'Razoável' }; 
+
+            } else if (entropy >= 28) { 
+
+                return { level: 2, width: '25%', color: 'bg-orange-500', textColor: 'text-orange-400', text: 'Fraca' }; 
+
+            } else if (entropy > 0) { 
+
+                return { level: 1, width: '10%', color: 'bg-red-500', textColor: 'text-red-400', text: 'Muito Fraca' }; 
+
+            } 
+
+            return { level: 0, width: '0%', color: 'bg-gray-700', textColor: 'text-gray-500', text: 'Comece a digitar...' }; 
+
+        } 
+
+ 
+
+        function updateStrengthMeter(strength) { 
+
+            strengthBar.style.width = strength.width; 
+
+            strengthBar.className = `h-4 rounded-full transition-all ${strength.color}`; 
+
+            strengthText.textContent = strength.text; 
+
+        } 
+
+ 
+
+        function updateVisualWord(length, strength) { 
+
+            const baseWord = 'SAFEPASSWORD'.split(''); 
+
+            const shuffledIndices = [5, 0, 8, 2, 10, 3, 7, 1, 9, 4, 11, 6]; 
+
+            const leetChars = ['%', '$', '0', '#', '!', '3', '&', '@', '5', '4', '|', '*']; 
+
+            const transformCount = Math.min(length, 12); 
+
+ 
+
+            for (let i = 0; i < transformCount; i++) { 
+
+                const indexToChange = shuffledIndices[i]; 
+
+                const newChar = leetChars[i]; 
+
+                baseWord[indexToChange] = `<span class="${strength.textColor}">${newChar}</span>`; 
+
+            } 
+
+ 
+
+            visualPassword.innerHTML = baseWord.join(''); 
+
+             
+
+            if (strength.level > 0) { 
+
+                visualPassword.classList.remove('text-gray-500'); 
+
+                visualPassword.classList.add('text-white'); 
+
+            } else { 
+
+                visualPassword.classList.add('text-gray-500'); 
+
+                visualPassword.classList.remove('text-white'); 
+
+            } 
+
+        } 
+
+ 
+
+        function updateTips(length, has) { 
+
+            const updateTipStyle = (element, condition) => { 
+
+                element.classList.toggle('text-green-400', condition); 
+
+                element.classList.toggle('text-gray-400', !condition); 
+
+                element.querySelector('svg').classList.toggle('text-green-400', condition); 
+
+            }; 
+
+ 
+
+            updateTipStyle(tipLength, length >= 12); 
+
+            updateTipStyle(tipUppercase, has.uppercase); 
+
+            updateTipStyle(tipLowercase, has.lowercase); 
+
+            updateTipStyle(tipNumbers, has.numbers); 
+
+            updateTipStyle(tipSymbols, has.symbols); 
+
+        } 
+
+ 
+
+        function displayCrackTime(seconds) { 
+
+            if (seconds < 1) { 
+
+                crackTimeText.textContent = 'Instantaneamente'; 
+
+                return; 
+
+            } 
+
+            const minute = BigInt(60), hour = minute * BigInt(60), day = hour * BigInt(24); 
+
+            const year = day * BigInt(365), millennium = year * BigInt(1000); 
+
+             
+
+            if (seconds < minute) return crackTimeText.textContent = `${seconds} segundo${seconds > 1 ? 's' : ''}`; 
+
+            if (seconds < hour) return crackTimeText.textContent = `${seconds / minute} minuto${seconds / minute > 1 ? 's' : ''}`; 
+
+            if (seconds < day) return crackTimeText.textContent = `${seconds / hour} hora${seconds / hour > 1 ? 's' : ''}`; 
+
+            if (seconds < year) return crackTimeText.textContent = `${seconds / day} dia${seconds / day > 1 ? 's' : ''}`; 
+
+            if (seconds < millennium) return crackTimeText.textContent = `${seconds / year} ano${seconds / year > 1 ? 's' : ''}`; 
+
+             
+
+            const years = seconds / year; 
+
+            if (years < 1000000n) return crackTimeText.textContent = `${years / 1000n} mil anos`; 
+
+            if (years < 1000000000n) return crackTimeText.textContent = `${years / 1000000n} milhões de anos`; 
+
+            if (years < 1000000000000n) return crackTimeText.textContent = `${years / 1000000000n} bilhões de anos`; 
+
+             
+
+            crackTimeText.textContent = 'Uma eternidade'; 
+
+        } 
+
+         
+
+        function resetUI() { 
+
+            strengthBar.style.width = '0%'; 
+
+            strengthBar.className = 'h-4 rounded-full transition-all bg-gray-700'; 
+
+            strengthText.textContent = 'Comece a digitar...'; 
+
+            crackTimeText.textContent = '--'; 
+
+             
+
+            visualPassword.innerHTML = 'SAFEPASSWORD'; 
+
+            visualPassword.classList.add('text-gray-500'); 
+
+            visualPassword.classList.remove('text-white'); 
+
+             
+
+            updateTips(0, { lowercase: false, uppercase: false, numbers: false, symbols: false }); 
+
+        } 
+
+ 
+
+        resetUI(); 
+
+    </script> 
+
+</body> 
+
+</html> 
