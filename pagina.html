@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulação de Phishing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      width: 420px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      text-align: left;
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    a.phish-link {
+      color: #0066cc;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Login falso */
+    .login-box {
+      text-align: center;
+    }
+    .login-box img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #0067b8;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .login-box button:hover {
+      background: #004c87;
+    }
+
+    /* Painel atacante */
+    .attacker {
+      font-family: "Consolas", monospace;
+      background: #111;
+      color: #0f0;
+    }
+    .attacker h1 {
+      color: #ff5555;
+    }
+    .dados {
+      background: #222;
+      border: 1px solid #444;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 5px;
+    }
+    .alerta {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid red;
+      background: #330000;
+      color: #ff9999;
+    }
+  </style>
+</head>
+<body>
+  <!-- Página 1: Email com link malicioso -->
+  <div id="emailPage" class="box active">
+    <h2>📩 Novo e-mail</h2>
+    <p><strong>De:</strong> suporte@microsoft.com</p>
+    <p><strong>Assunto:</strong> Sua conta será bloqueada!</p>
+    <p>Olá,</p>
+    <p>
+      Detectamos atividade suspeita em sua conta Microsoft.<br>
+      Para continuar usando nossos serviços, <br>
+      clique no link abaixo e confirme seus dados:
+    </p>
+    <p>
+      👉 <a class="phish-link" href="#" 
+            title="http://maquina-do-atacante.com/login" 
+            onclick="mostrarLogin()">https://microsoft.com/security</a>
+    </p>
+    <p><small>Passe o mouse sobre o link para ver o endereço real!</small></p>
+  </div>
+
+  <!-- Página 2: Login falso da "Microsofte" -->
+  <div id="loginPage" class="box login-box">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Logo">
+    <h2>Entrar em sua conta <b>Microsofte</b></h2>
+
+    <input type="text" id="email" placeholder="Email, telefone ou Skype">
+    <input type="password" id="senha" placeholder="Senha">
+    <button onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <!-- Página 3: Painel do atacante -->
+  <div id="attackerPage" class="box attacker">
+    <h1>📥 Painel do Atacante (simulação)</h1>
+    <p>Essas são as credenciais que foram digitadas:</p>
+
+    <div class="dados">
+      <p><b>Email capturado:</b> <span id="mostraEmail"></span></p>
+      <p><b>Senha capturada:</b> <span id="mostraSenha"></span></p>
+    </div>
+
+    <div class="alerta">
+      ⚠️ <b>Atenção:</b> Isso é apenas uma simulação educativa.<br>
+      Em um ataque real, esses dados seriam enviados a um servidor criminoso.<br>
+      👉 Sempre verifique o endereço do site antes de clicar.
+    </div>
+  </div>
+
+  <script>
+    function mostrarLogin() {
+      document.getElementById("emailPage").classList.remove("active");
+      document.getElementById("loginPage").classList.add("active");
+    }
+
+    function fazerLogin() {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      document.getElementById("mostraEmail").textContent = email || "(vazio)";
+      document.getElementById("mostraSenha").textContent = senha || "(vazio)";
+
+      document.getElementById("loginPage").classList.remove("active");
+      document.getElementById("attackerPage").classList.add("active");
+    }
+  </script>
+</body>
+</html>
